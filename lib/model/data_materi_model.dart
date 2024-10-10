@@ -2,11 +2,13 @@ class Materi {
   int? id; // ID untuk database
   String? deskripsi; // Deskripsi materi
   String? relevansi; // Relevansi materi
+  String? tujuanpembelajaran; // Relevansi materi
 
   Materi({
-    this.id,
-    this.deskripsi,
-    this.relevansi,
+    this.id =0 ,
+    this.deskripsi='',
+    this.relevansi='',
+    this.tujuanpembelajaran='',
   });
 
   Map<String, dynamic> toMap() {
@@ -14,6 +16,7 @@ class Materi {
       'id': id,
       'deskripsi': deskripsi,
       'relevansi': relevansi,
+      'tujuanpembelajran': tujuanpembelajaran,
     };
   }
 
@@ -22,6 +25,7 @@ class Materi {
       id: map['id'],
       deskripsi: map['deskripsi'],
       relevansi: map['relevansi'],
+      tujuanpembelajaran: map['tujuanpembelajaran'],
     );
   }
 }

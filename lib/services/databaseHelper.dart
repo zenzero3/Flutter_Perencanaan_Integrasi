@@ -49,10 +49,7 @@ class DatabaseHelper {
   }
 
   Future<void> _onCreate(Database db) async {
-    // await db.execute('DROP TABLE IF EXISTS identitasmatkul');
-    // await db.execute('DROP TABLE IF EXISTS asesmen'); 
-    // await db.execute('DROP TABLE IF EXISTS literasi');
-
+  
     await db.execute('''
     CREATE TABLE IF NOT EXISTS identitasmatkul (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,6 +85,25 @@ class DatabaseHelper {
          aktivitas_literasi TEXT,
          konten_numeric TEXT,
         aktivitas_numeric TEXT
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS materi (
+        id INTEGER PRIMARY KEY,
+         deskripsi TEXT,
+         relevansi TEXT,
+         tujuanpembelajran TEXT
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS submateri (
+         id INTEGER PRIMARY KEY,
+         materi_id INTEGER, -- Foreign key to the materi table
+         uraianmateri TEXT,
+         ilustrasi TEXT,
+         contohstudikasus TEXT,
+         latihan TEXT,
+        FOREIGN KEY(materi_id) REFERENCES materi(id) ON DELETE CASCADE
       )
     ''');
   }
@@ -213,6 +229,92 @@ class DatabaseHelper {
       whereArgs: [id], // Nilai dari syarat
     );
   }
+Future<void> insertMateri(Map<String, dynamic> data) async {
+  final db = await database;
+
+  Map<String, dynamic> materiData = {
+    "deskripsi": data["deskripsi"],
+    "relevansi": data["relevansi"],
+    "tujuanpembelajran": data["tujuanpembelajran"]
+  };
+
+  await db.insert(
+    'materi',
+    materiData,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+Future<void> insertSubMateri(Map<String, dynamic> data) async {
+  final db = await database;
+
+  Map<String, dynamic> subMateriData = {
+    "materi_id": data["materi_id"], // Foreign key dari materi
+    "uraianmateri": data["uraianmateri"],
+    "ilustrasi": data["ilustrasi"],
+    "contohstudikasus": data["contohstudikasus"],
+    "latihan": data["latihan"],
+  };
+
+  await db.insert(
+    'submateri',
+    subMateriData,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+Future<void> deleteSubMateri(int id) async {
+  final db = await database;
+
+  await db.delete(
+    'submateri',
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
+
+Future<void> deleteMateri(int id) async {
+  final db = await database;
+
+  await db.delete(
+    'materi',
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
+
+Future<void> updateMateri(int id, Map<String, dynamic> data) async {
+  final db = await database;
+
+  Map<String, dynamic> materiData = {
+    "deskripsi": data["deskripsi"],
+    "relevansi": data["relevansi"],
+    "tujuanpembelajran": data["tujuanpembelajran"]
+  };
+
+  await db.update(
+    'materi',
+    materiData,
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
+Future<void> updateSubMateri(int id, Map<String, dynamic> data) async {
+  final db = await database;
+
+  Map<String, dynamic> subMateriData = {
+    "materi_id": data["materi_id"],
+    "uraianmateri": data["uraianmateri"],
+    "ilustrasi": data["ilustrasi"],
+    "contohstudikasus": data["contohstudikasus"],
+    "latihan": data["latihan"],
+  };
+
+  await db.update(
+    'submateri',
+    subMateriData,
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
 
   Future<void> updateLiterasi(int id, Map<String, dynamic> data) async {
     final db = await database;
@@ -339,6 +441,15 @@ class DatabaseHelper {
     final db = await database;
     return await db.query('asesmen');
   }
+  Future<List<Map<String, dynamic>>> getAllMateri() async {
+  final db = await database;
+  return await db.query('materi');
+}
+Future<List<Map<String, dynamic>>> getAllSubMateri() async {
+  final db = await database;
+  return await db.query('submateri');
+}
+
 
   Future<void> closeDatabase() async {
     final db = await database;

@@ -4,6 +4,7 @@ import 'package:offlineapp/view/data_assesment_page.dart';
 import 'package:offlineapp/view/data_bahanajar_page.dart';
 import 'package:offlineapp/view/data_literasi_numerasi_page.dart';
 import 'package:offlineapp/view/data_pembelajaran_page.dart';
+import 'package:offlineapp/view/data_perencanaan_pembelajaran_page.dart';
 
 class MenuItem {
   final String title;
@@ -44,7 +45,7 @@ class MenuModel {
           icon: FontAwesomeIcons.list),
       MenuItem(
           title: 'Perencanaan Pembelajaran',
-          onTap: DataBahanajarPage(),
+          onTap: DataPerencanaanPembelajaranPage(),
           icon: FontAwesomeIcons.listCheck),
       MenuItem(
           press: deleteConfirmationCallback, // Memanggil callback saat di-tap

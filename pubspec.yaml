@@ -43,6 +43,9 @@ dependencies:
   file_selector_windows: ^0.9.3+3
   sqflite_common_ffi: ^2.3.3
   flutter_quill: ^10.7.6
+  pdf: ^3.11.1
+  path_provider: ^2.1.4
+  open_file: ^3.5.8
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +98,7 @@ flutter:
           style: italic
         - asset: assets/fonts/NunitoSans10pt-Italic.ttf
           style: italic
+        
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
