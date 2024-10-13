@@ -67,7 +67,7 @@ class DataLiteralisasiPresenter {
 
   Future<void> removeAsesmen(int index) async {
     final db = DatabaseHelper();
-    final data = await model.getData();
+    final data = model.getData();
     final literasi = data[index];
     print('nilai ${literasi.id == null}');
     if (literasi.id == null) {

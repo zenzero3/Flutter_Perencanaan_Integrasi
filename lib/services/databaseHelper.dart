@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_common/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -33,17 +34,24 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    // Inisialisasi sqflite untuk FFI
-    sqfliteFfiInit();
+    if (kIsWeb) {
+      // Use the web-compatible database factory
+      databaseFactory = databaseFactoryFfiWeb;
+    } else {
+      // Initialize sqflite for FFI on non-web platforms
+      sqfliteFfiInit();
+    }
 
-    // Mengambil path database di memori
+    // Getting the database path
     String path = join(
-        await databaseFactoryFfi.getDatabasesPath(), 'data_pembelajaran.db');
+      await databaseFactory.getDatabasesPath(),
+      'data_pembelajaran.db',
+    );
 
-    // Membuka database
-    final db = await databaseFactoryFfi.openDatabase(path);
+    // Open the database
+    final db = await databaseFactory.openDatabase(path);
 
-    // Memanggil fungsi untuk membuat tabel jika belum ada
+    // Call function to create tables if not exist
     await _onCreate(db);
     return db;
   }

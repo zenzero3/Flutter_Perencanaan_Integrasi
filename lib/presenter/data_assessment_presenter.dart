@@ -76,7 +76,7 @@ class DataAssessmentPresenter {
 
   // Menghapus asesmen berdasarkan index
   Future<void> removeAsesmen(int index) async {
-    final data = await model.getData();
+    final data = model.getData();
     final asesmen = data[index];
     
     print('assasi ${asesmen.id}');

@@ -104,20 +104,20 @@ class DataBahanajarPresenter {
     }
   }
 
-  // Mengisi dummy data
-  void populateDummyData() {
-    // Buat beberapa objek Materi
-    var materi1 = Materi(id: 1, deskripsi: '', relevansi: '', tujuanpembelajaran: '');
+ void populateDummyData() {
+  // Buat beberapa objek Materi
+  var materi1 = Materi(id: 1, deskripsi: '', relevansi: '', tujuanpembelajaran: '');
 
-    // Buat beberapa objek SubMateriModel
-    var subMateri1 = SubMateriModel(id: 1, ilustrasi: '', contohstudikasus: '', latihan: '');
+  // Buat beberapa objek SubMateriModel
+  var subMateri1 = SubMateriModel(id: 1, ilustrasi: '', contohstudikasus: '', latihan: '');
 
-    // Buat DataBahanAjar dengan materi dan sub materi
-    var dataBahanAjar1 = DataBahanAjar(materi: materi1, subMateriList: [subMateri1]);
+  // Buat DataBahanAjar dengan materi dan sub materi
+  var dataBahanAjar1 = DataBahanAjar(materi: materi1, subMateriList: [subMateri1]); // Pastikan struktur konsisten
 
-    // Tambahkan ke dalam list
-    model.addBahanAjar(dataBahanAjar1);
-  }
+  // Tambahkan ke dalam list
+  model.addBahanAjar(dataBahanAjar1);
+}
+
 
   void populateDummyData2(int index, SubMateriModel newSubMateri) {
     // Check if the index is valid

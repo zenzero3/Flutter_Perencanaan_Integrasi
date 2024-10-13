@@ -1,26 +1,97 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_selector/file_selector.dart'; // Import file_selector
-import 'package:offlineapp/utils/helper.dart';
+import 'package:offlineapp/services/pdf_desktop.dart';
+import 'package:offlineapp/services/pdf_web.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+// Untuk Membuat PDF
 import 'dart:io';
+import 'package:pdf/widgets.dart' as pw;
 import '../presenter/data_pembelajaran_presenter.dart';
 import '../model/data_pembelajaran_model.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
+import '../utils/helper.dart';
+
 class DataPembelajaranPage extends StatefulWidget {
-  late final bool shouldReload;
-  DataPembelajaranPage({Key? key, this.shouldReload = false}) : super(key: key);
+  final bool shouldReload; // Change 'late final' to 'final'
+
+  const DataPembelajaranPage(
+      {super.key, this.shouldReload = false}); // Default to false
+
   @override
   _DataPembelajaranPageState createState() => _DataPembelajaranPageState();
 }
 
+Future<void> generateModulPdf(Map<String, dynamic> data) async {
+  final pdf = pw.Document();
+
+  // Mendapatkan data dari parameter
+  // final namaMataKuliah = data['Nama Mata Kuliah'] ?? 'N/A';
+  // final tingkatJenjang = data['Tingkat/Jenjang'] ?? 'N/A';
+  // final namaDosen = data['Nama Dosen'] ?? 'N/A';
+  // final mataKuliahPrasyarat = data['Mata Kuliah Prasyarat'] ?? 'N/A';
+  // final capaianPembelajaran = data['Capaian Pembelajaran'] ?? 'N/A';
+
+  // Cek apakah data 'Media / Sumber Belajar Umum' tersedia dan berbentuk JSON
+  Document? document;
+  // if (data['Media / Sumber Belajar Umum'] != null) {
+  //   var jsonData = jsonDecode(data['Media / Sumber Belajar Umum']);
+  //   document = Document.fromJson(jsonData); // Ini untuk mengubah Quill JSON ke dalam format dokumen
+  // }
+
+  // Menambahkan halaman dengan format yang diinginkan
+  pdf.addPage(
+    pw.Page(
+      build: (pw.Context context) {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('A. IDENTITAS',
+                style:
+                    pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 10),
+            pw.Text('Nama Mata Kuliah : ',
+                style: const pw.TextStyle(fontSize: 12)),
+            pw.SizedBox(height: 5),
+            pw.Text('Tingkat/Jenjang : ',
+                style: const pw.TextStyle(fontSize: 12)),
+            pw.SizedBox(height: 5),
+            pw.Text('Nama Dosen : ', style: const pw.TextStyle(fontSize: 12)),
+            pw.SizedBox(height: 5),
+            pw.Text('Mata Kuliah Prasyarat : ',
+                style: const pw.TextStyle(fontSize: 12)),
+            pw.SizedBox(height: 5),
+            pw.Text('Capaian Pembelajaran : ',
+                style: const pw.TextStyle(fontSize: 12)),
+            pw.SizedBox(height: 10),
+
+            // Bagian untuk menampilkan 'Media / Sumber Belajar Umum'
+          ],
+        );
+      },
+    ),
+  );
+    final pdfBytes = await pdf.save(); // Menyimpan PDF ke dalam bytes
+ try {
+    if (kIsWeb) {
+      // Panggil fungsi untuk web
+      savePdfWeb(pdfBytes);
+    } else {
+      // Panggil fungsi untuk desktop
+      await savePdfDesktop(pdfBytes);
+    }
+  } catch (e) {
+    print("Error saat menyimpan PDF: $e");
+  }
+}
+
 class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
   late DataPembelajaranPresenter presenter;
-  
+
   final _namaMataKuliahController = TextEditingController();
   final _tingkatJenjangController = TextEditingController();
   final _namaDosenController = TextEditingController();
@@ -93,7 +164,7 @@ class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
           var document = Document.fromJson(jsonData);
           _controller = QuillController(
             document: document,
-            selection: TextSelection.collapsed(offset: 0),
+            selection: const TextSelection.collapsed(offset: 0),
           );
         } else {
           // Jika tidak ada data, reset text controller atau isi dengan default
@@ -132,7 +203,7 @@ class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
 
   // Function to pick an image from the folder using file_selector
   Future<void> _pickImage() async {
-    final XTypeGroup typeGroup = XTypeGroup(
+    const XTypeGroup typeGroup = XTypeGroup(
       label: 'images',
       extensions: ['jpg', 'jpeg', 'png'],
     );
@@ -156,94 +227,104 @@ class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Identitas Mata Kuliah / Mata Pembelajaran',
+              const Text(
+                'Identitas Mata Pembelajaran / Mata Kuliah',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _namaMataKuliahController,
-                decoration: InputDecoration(
-                  labelText: 'Nama Mata Kuliah / Mata Pembelajaran',
+                decoration: const InputDecoration(
+                  labelText: 'Mata Pembelajaran / Nama Mata Kuliah',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _tingkatJenjangController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Tingkat/Jenjang',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _namaDosenController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Nama Penyusun',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
-                controller: _mataKuliahPrasyaratController,
-                decoration: InputDecoration(
-                  labelText: 'Mata Kuliah / Materi Prasyarat',
+                controller: _namaDosenController,
+                decoration: const InputDecoration(
+                  labelText: 'Sekolah / Instansi ',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
+              TextFormField(
+                controller: _mataKuliahPrasyaratController,
+                decoration: const InputDecoration(
+                  labelText: 'Materi / Mata Kuliah Prasyarat',
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                ),
+              ),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _capaianPembelajaranController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Capaian Pembelajaran',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _strategiUmumController, // Added field
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Strategi Umum',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _assessmentUseController, // Added field
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Assessmen Yang Digunakan',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _bahanKajianController, // Added field
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Bahan Kajian',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _mediaPembelajrantextController, // Added field
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Media Pembelajaran',
                   border: OutlineInputBorder(),
                   contentPadding:
@@ -251,21 +332,21 @@ class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
                 ),
               ),
 
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _jumlahAlokasiWaktuController, // Added field
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Jumlah Alokasi Waktu',
                   border: OutlineInputBorder(),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Container(
                 margin: const EdgeInsets.only(
                     left: 12.0), // Set your desired margin here
-                child: Text(
+                child: const Text(
                   'Media / Sumber Belajar Umum',
                   style: TextStyle(
                     fontSize: 14,
@@ -273,7 +354,7 @@ class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
                 ),
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -366,13 +447,14 @@ class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
               //     ),
               //   ],
               // ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               Center(
                 child: SizedBox(
                   width: 200,
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () async {
+                       
                       final jsonData = _controller.document.toDelta().toJson();
                       final jsonString =
                           jsonEncode(jsonData); // Convert to JSON string
@@ -417,14 +499,14 @@ class _DataPembelajaranPageState extends State<DataPembelajaranPage> {
                         }
                       }
                     },
-                    child: Text(
+                    child: const Text(
                       'Simpan Data',
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
             ],
           ),
         ),

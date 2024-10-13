@@ -29,8 +29,21 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>offlineapp</title>
+  <title>Perencanaan Pembelajaran</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Register the Sqflite Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sqflite_sw.js')
+        .then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        })
+        .catch(function(error) {
+          console.log('ServiceWorker registration failed: ', error);
+        });
+    }
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

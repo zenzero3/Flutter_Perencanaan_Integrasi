@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:offlineapp/model/data_assesment_model.dart';
 import 'package:offlineapp/model/data_literasi_model.dart';
 import 'package:offlineapp/presenter/data_literalisasi_presenter.dart';
 import 'package:offlineapp/utils/helper.dart';
-import '../presenter/data_assessment_presenter.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import '../services/databaseHelper.dart';
 
 class DataLiterasiNumerasiPage extends StatefulWidget {
+  const DataLiterasiNumerasiPage({super.key});
+
   @override
   _DataLiterasiNumerasiState createState() => _DataLiterasiNumerasiState();
 }
@@ -61,7 +61,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                 var document = Document.fromJson(jsonData);
                 return QuillController(
                   document: document,
-                  selection: TextSelection.collapsed(offset: 0),
+                  selection: const TextSelection.collapsed(offset: 0),
                 );
               } else if (i == 1) {
                 // Mengisi controller kedua dengan aktivitas literasi
@@ -70,7 +70,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                 var document = Document.fromJson(jsonData);
                 return QuillController(
                   document: document,
-                  selection: TextSelection.collapsed(offset: 0),
+                  selection: const TextSelection.collapsed(offset: 0),
                 );
               } else if (i == 2) {
                 // Mengisi controller ketiga dengan konteks numerasi
@@ -79,7 +79,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                 var document = Document.fromJson(jsonData);
                 return QuillController(
                   document: document,
-                  selection: TextSelection.collapsed(offset: 0),
+                  selection: const TextSelection.collapsed(offset: 0),
                 );
               } else {
                 // Mengisi controller keempat dengan aktivitas numerasi
@@ -88,7 +88,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                 var document = Document.fromJson(jsonData);
                 return QuillController(
                   document: document,
-                  selection: TextSelection.collapsed(offset: 0),
+                  selection: const TextSelection.collapsed(offset: 0),
                 );
               }
             });
@@ -137,11 +137,11 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Literasi dan Numerasi',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16), // Spasi antar widget
+            const SizedBox(height: 16), // Spasi antar widget
 
             if (data
                 .isNotEmpty) // Hanya menampilkan Expanded jika data tidak kosong
@@ -150,31 +150,29 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     var literasi = data[index];
-                    var count = literasi.id == null
-                        ? (literasi.id ?? 0) + 1
-                        : literasi.id; // Jika literasi.id null, gunakan 0
+                    var count = literasi.id ?? (literasi.id ?? 0) + 1; // Jika literasi.id null, gunakan 0
                     return Card(
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                      margin: const EdgeInsets.symmetric(vertical: 5),
                       child: ListTile(
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Pertemuan ${count}',
-                              style: TextStyle(
+                              'Pertemuan $count',
+                              style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   fontStyle: FontStyle.normal),
                             ),
-                            SizedBox(height: 15), // Spasi antar widget
-                            Text(
+                            const SizedBox(height: 15), // Spasi antar widget
+                            const Text(
                               'Konten dan Konteks Literasi',
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   fontStyle: FontStyle.normal),
                             ),
-                            SizedBox(height: 10), // Spasi antar widget
+                            const SizedBox(height: 10), // Spasi antar widget
 
                             QuillToolbar.simple(
                               controller: _controllers[index][0],
@@ -186,7 +184,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                     FlutterQuillEmbeds.toolbarButtons(),
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
 
                             // QuillEditor untuk aktivitas literasi
                             Container(
@@ -206,15 +204,15 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20), // Spasi antar widget
-                            Text(
+                            const SizedBox(height: 20), // Spasi antar widget
+                            const Text(
                               'Aktivitas Literasi',
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   fontStyle: FontStyle.normal),
                             ),
-                            SizedBox(height: 10), // Spasi antar widget
+                            const SizedBox(height: 10), // Spasi antar widget
 
                             QuillToolbar.simple(
                               controller: _controllers[index][1],
@@ -226,7 +224,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                     FlutterQuillEmbeds.toolbarButtons(),
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
 
                             // QuillEditor untuk aktivitas literasi
                             Container(
@@ -246,16 +244,16 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
-                            SizedBox(height: 20), // Spasi antar widget
-                            Text(
+                            const SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 20), // Spasi antar widget
+                            const Text(
                               'Konten dan Konteks Numerasi',
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   fontStyle: FontStyle.normal),
                             ),
-                            SizedBox(height: 10), // Spasi antar widget
+                            const SizedBox(height: 10), // Spasi antar widget
 
                             QuillToolbar.simple(
                               controller: _controllers[index][2],
@@ -267,7 +265,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                     FlutterQuillEmbeds.toolbarButtons(),
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
 
                             // QuillEditor untuk aktivitas literasi
                             Container(
@@ -287,16 +285,16 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
-                            SizedBox(height: 20), // Spasi antar widget
-                            Text(
+                            const SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 20), // Spasi antar widget
+                            const Text(
                               'Aktivitas Numerasi',
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   fontStyle: FontStyle.normal),
                             ),
-                            SizedBox(height: 10), // Spasi antar widget
+                            const SizedBox(height: 10), // Spasi antar widget
 
                             QuillToolbar.simple(
                               controller: _controllers[index][3],
@@ -308,7 +306,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                     FlutterQuillEmbeds.toolbarButtons(),
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
 
                             // QuillEditor untuk aktivitas literasi
                             Container(
@@ -328,7 +326,7 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -386,9 +384,9 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                           'Data gagal disimpan. Silakan coba lagi.');
                                     }
                                   }, // Save data when pressed
-                                  child: Text('Simpan Data'),
+                                  child: const Text('Simpan Data'),
                                 ),
-                                SizedBox(width: 15), // Spacing between buttons
+                                const SizedBox(width: 15), // Spacing between buttons
                                 SizedBox(
                                   // Wrap Hapus button in SizedBox for custom width
 
@@ -396,12 +394,12 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                                     onPressed: () {
                                       _removeAsesmen(index);
                                     }, // Delete item when pressed
-                                    child: Text('Hapus Data'),
+                                    child: const Text('Hapus Data'),
                                   ),
                                 )
                               ],
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
                           ],
                         ),
                       ),
@@ -410,20 +408,20 @@ class _DataLiterasiNumerasiState extends State<DataLiterasiNumerasiPage> {
                 ),
               )
             else
-              Center(child: Text("")), // Pesan jika data kosong
+              const Center(child: Text("")), // Pesan jika data kosong
 
-            SizedBox(height: 16), // Spasi antar widget
+            const SizedBox(height: 16), // Spasi antar widget
             Center(
               child: SizedBox(
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    final count = data.length > 0 ? data.length + 1 : 1;
+                    final count = data.isNotEmpty ? data.length + 1 : 1;
                     model.addDummyData(count);
 
                     setState(() {});
                   },
-                  child: Text(
+                  child: const Text(
                     'Tambah Literasi dan Numerasi',
                     style: TextStyle(fontSize: 16),
                   ),

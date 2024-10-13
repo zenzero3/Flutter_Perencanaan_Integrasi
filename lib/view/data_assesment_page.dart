@@ -5,6 +5,8 @@ import '../presenter/data_assessment_presenter.dart';
 import '../services/databaseHelper.dart';
 
 class DataAssessmentPage extends StatefulWidget {
+  const DataAssessmentPage({super.key});
+
   @override
   _DataAssessmentPageState createState() => _DataAssessmentPageState();
 }
@@ -50,11 +52,11 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Asesmen',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10), // Spasi antar widget
+            const SizedBox(height: 10), // Spasi antar widget
 
             if (data
                 .isNotEmpty) // Hanya menampilkan Expanded jika data tidak kosong
@@ -64,7 +66,7 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                   itemBuilder: (context, index) {
                     var asesmen = data[index];
                     return Card(
-                      margin: EdgeInsets.symmetric(vertical: 4),
+                      margin: const EdgeInsets.symmetric(vertical: 4),
                       child: ListTile(
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,14 +80,14 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                                 asesmen.pertemuanKe =
                                     value; // Update pertemuanKe
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: '',
                                     border: InputBorder.none, // Menghilangkan border
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
 
                             // Indikator Diagnostik
                             TextFormField(
@@ -93,14 +95,14 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                               onChanged: (value) {
                                 asesmen.indikatorDiagnostik = value;
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Asesmen Awal / Diagnostik',
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
 
                             // Indikator Formatif
                             TextFormField(
@@ -108,14 +110,14 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                               onChanged: (value) {
                                 asesmen.indikatorFormatif = value;
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Asesmen Formatif',
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
 
                             // Indikator Sumatif
                             TextFormField(
@@ -123,14 +125,14 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                               onChanged: (value) {
                                 asesmen.indikatorSumatif = value;
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Asesmen Sumatif',
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
 
                             // Kemampuan Kognitif
                             TextFormField(
@@ -138,14 +140,14 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                               onChanged: (value) {
                                 asesmen.kognitif = value;
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Kemampuan Kognitif / Pengetahuan',
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
 
                             // Kemampuan Afektif
                             TextFormField(
@@ -153,14 +155,14 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                               onChanged: (value) {
                                 asesmen.afektif = value;
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Kemampuan Afektif / Sikap',
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
 
                             // Kemampuan Psikomotorik
                             TextFormField(
@@ -168,7 +170,7 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                               onChanged: (value) {
                                 asesmen.psikomotorik = value;
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText:
                                     'Kemampuan Psikomotorik / Keterampilan',
                                 border: OutlineInputBorder(),
@@ -176,7 +178,7 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                                     vertical: 10.0, horizontal: 10.0),
                               ),
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
 
                             Center(
                               child: SizedBox(
@@ -196,18 +198,18 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                                     }
                                     // Logika simpan data
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     'Simpan Data',
                                     style: TextStyle(fontSize: 16),
                                   ),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16), // Spasi antar widget
+                            const SizedBox(height: 16), // Spasi antar widget
                           ],
                         ),
                         trailing: IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () =>
                               _removeAsesmen(index), // Hapus asesmen
                         ),
@@ -217,20 +219,20 @@ class _DataAssessmentPageState extends State<DataAssessmentPage> {
                 ),
               )
             else
-              Center(child: Text("")), // Pesan jika data kosong
+              const Center(child: Text("")), // Pesan jika data kosong
 
-            SizedBox(height: 16), // Spasi antar widget
+            const SizedBox(height: 16), // Spasi antar widget
             Center(
               child: SizedBox(
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    final count = data.length > 0 ? data.length + 1 : 1;
+                    final count = data.isNotEmpty ? data.length + 1 : 1;
                     model.addDummyData(count);
 
                     setState(() {});
                   },
-                  child: Text(
+                  child: const Text(
                     'Tambahkan Asesmen ',
                     style: TextStyle(fontSize: 16),
                   ),

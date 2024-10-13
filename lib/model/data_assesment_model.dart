@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 class Asesmen {
   int? id;
@@ -11,7 +10,7 @@ class Asesmen {
   String? psikomotorik;
 
   Asesmen({
-    this.id = null,
+    this.id,
     this.pertemuanKe = '',
     this.indikatorDiagnostik = '',
     this.indikatorFormatif = '',
@@ -67,7 +66,7 @@ class DataAssessmentModel {
 
   void addDummyData(index) {
     var dummyAsesmen = Asesmen(
-      pertemuanKe: 'Pertemua ${index}',
+      pertemuanKe: 'Pertemua $index',
       indikatorDiagnostik: "",
       indikatorFormatif: "",
       indikatorSumatif: "",

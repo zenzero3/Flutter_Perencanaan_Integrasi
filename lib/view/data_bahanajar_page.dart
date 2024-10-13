@@ -12,17 +12,15 @@ import 'package:offlineapp/model/data_pembelajaran_model.dart';
 import 'package:offlineapp/model/sub_materi_model.dart';
 import 'package:offlineapp/presenter/data_pembelajaran_presenter.dart';
 import 'package:offlineapp/utils/helper.dart';
-import 'package:offlineapp/view/data_pembelajaran_page.dart';
 import '../model/data_bahanajar_model.dart';
 import '../presenter/data_bahanajar_presenter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class DataBahanajarPage extends StatefulWidget {
-  late final bool shouldReload;
-  DataBahanajarPage({Key? key, this.shouldReload = false}) : super(key: key);
+  const DataBahanajarPage({super.key});
+
   @override
   _DataBahanajarPageState createState() => _DataBahanajarPageState();
 }
@@ -32,6 +30,7 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
   late final DataBahanajarPresenter presenter;
   late final DataPembelajaranPresenter matkulPresent;
   List<List<QuillController>> _controllers = [];
+  List<List<QuillController>> _Subcontrollers = [];
 
   final _namaMataKuliahController = TextEditingController();
   final _tingkatJenjangController = TextEditingController();
@@ -44,22 +43,17 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
   final _bahanKajianController = TextEditingController(); // Added
   final _jumlahAlokasiWaktuController = TextEditingController(); // Added
   QuillController _controller = QuillController.basic();
+
   void _initializeControllers() {
-    var data = presenter.fetchDataFromModel();
-    var nilai = data.length;
-    print(
-        'length of data: ${data.length}'); // Total number of elements in 'data'
-    for (var i = 0; i < data.length; i++) {
-      if (data[i].subMateriList?.length != data.length) {
-        nilai = data[i].subMateriList!.length;
-      }
-      print(
-          'length of subMateriList at index $i: ${data[i].subMateriList?.length ?? 0}');
-    }
-    print('length  $nilai');
-    // Ambil data
-    _controllers = List.generate(
-        nilai, (index) => List.generate(10, (i) => QuillController.basic()));
+    var data = presenter.fetchDataFromModel(); // Ambil data
+    _controllers = List.generate(data.length,
+        (index) => List.generate(999, (i) => QuillController.basic()));
+    // Inisialisasi kontroler
+  }
+
+  void _initializeControllers2(data) {
+    _Subcontrollers = List.generate(data.length,
+        (index) => List.generate(999, (i) => QuillController.basic()));
     // Inisialisasi kontroler
   }
 
@@ -117,7 +111,7 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
             var document = Document.fromJson(jsonData);
             _controller = QuillController(
               document: document,
-              selection: TextSelection.collapsed(offset: 0),
+              selection: const TextSelection.collapsed(offset: 0),
             );
           }
         } else {
@@ -153,7 +147,7 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
                   var document = Document.fromJson(jsonData);
                   return QuillController(
                     document: document,
-                    selection: TextSelection.collapsed(offset: 0),
+                    selection: const TextSelection.collapsed(offset: 0),
                   );
                 case 1:
                   // Mengisi controller kedua dengan aktivitas literasi
@@ -161,7 +155,7 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
                   var document = Document.fromJson(jsonData);
                   return QuillController(
                     document: document,
-                    selection: TextSelection.collapsed(offset: 0),
+                    selection: const TextSelection.collapsed(offset: 0),
                   );
                 case 2:
                   // Mengisi controller ketiga dengan konteks numerasi
@@ -170,7 +164,7 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
                   var document = Document.fromJson(jsonData);
                   return QuillController(
                     document: document,
-                    selection: TextSelection.collapsed(offset: 0),
+                    selection: const TextSelection.collapsed(offset: 0),
                   );
                 default:
                   // Mengisi controller keempat dengan aktivitas numerasi
@@ -178,7 +172,7 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
                   var document = Document.fromJson(jsonData);
                   return QuillController(
                     document: document,
-                    selection: TextSelection.collapsed(offset: 0),
+                    selection: const TextSelection.collapsed(offset: 0),
                   );
               }
             });
@@ -221,72 +215,71 @@ class _DataBahanajarPageState extends State<DataBahanajarPage> {
     });
   }
 
+  Future<void> generateModulPdf(Map<String, dynamic> data) async {
+    final pdf = pw.Document();
 
-Future<void> generateModulPdf(Map<String, dynamic> data) async {
-  final pdf = pw.Document();
+    // Mendapatkan data dari parameter
+    final namaMataKuliah = data['Nama Mata Kuliah'] ?? 'N/A';
+    final tingkatJenjang = data['Tingkat/Jenjang'] ?? 'N/A';
+    final namaDosen = data['Nama Dosen'] ?? 'N/A';
+    final mataKuliahPrasyarat = data['Mata Kuliah Prasyarat'] ?? 'N/A';
+    final capaianPembelajaran = data['Capaian Pembelajaran'] ?? 'N/A';
 
-  // Mendapatkan data dari parameter
-  final namaMataKuliah = data['Nama Mata Kuliah'] ?? 'N/A';
-  final tingkatJenjang = data['Tingkat/Jenjang'] ?? 'N/A';
-  final namaDosen = data['Nama Dosen'] ?? 'N/A';
-  final mataKuliahPrasyarat = data['Mata Kuliah Prasyarat'] ?? 'N/A';
-  final capaianPembelajaran = data['Capaian Pembelajaran'] ?? 'N/A';
+    // Cek apakah data 'Media / Sumber Belajar Umum' tersedia dan berbentuk JSON
+    Document? document;
+    if (data['Media / Sumber Belajar Umum'] != null) {
+      var jsonData = jsonDecode(data['Media / Sumber Belajar Umum']);
+      document = Document.fromJson(
+          jsonData); // Ini untuk mengubah Quill JSON ke dalam format dokumen
+    }
 
-  // Cek apakah data 'Media / Sumber Belajar Umum' tersedia dan berbentuk JSON
-  Document? document;
-  if (data['Media / Sumber Belajar Umum'] != null) {
-    var jsonData = jsonDecode(data['Media / Sumber Belajar Umum']);
-    document = Document.fromJson(jsonData); // Ini untuk mengubah Quill JSON ke dalam format dokumen
+    // Menambahkan halaman dengan format yang diinginkan
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('A. IDENTITAS',
+                  style: pw.TextStyle(
+                      fontSize: 12, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              pw.Text('Nama Mata Kuliah : $namaMataKuliah',
+                  style: const pw.TextStyle(fontSize: 12)),
+              pw.SizedBox(height: 5),
+              pw.Text('Tingkat/Jenjang : $tingkatJenjang',
+                  style: const pw.TextStyle(fontSize: 12)),
+              pw.SizedBox(height: 5),
+              pw.Text('Nama Dosen : $namaDosen',
+                  style: const pw.TextStyle(fontSize: 12)),
+              pw.SizedBox(height: 5),
+              pw.Text('Mata Kuliah Prasyarat : $mataKuliahPrasyarat',
+                  style: const pw.TextStyle(fontSize: 12)),
+              pw.SizedBox(height: 5),
+              pw.Text('Capaian Pembelajaran : $capaianPembelajaran',
+                  style: const pw.TextStyle(fontSize: 12)),
+              pw.SizedBox(height: 10),
+
+              // Bagian untuk menampilkan 'Media / Sumber Belajar Umum'
+            ],
+          );
+        },
+      ),
+    );
+
+    // Menyimpan PDF ke file
+    try {
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/modul_bahan_ajar.pdf");
+      await file.writeAsBytes(await pdf.save());
+      print("PDF disimpan di: ${file.path}");
+
+      // Membuka file PDF setelah disimpan
+      await OpenFile.open(file.path);
+    } catch (e) {
+      print("Error saat menyimpan PDF: $e");
+    }
   }
-
-  // Menambahkan halaman dengan format yang diinginkan
-  pdf.addPage(
-    pw.Page(
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text('A. IDENTITAS',
-                style: pw.TextStyle(
-                    fontSize: 12, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 10),
-            pw.Text('Nama Mata Kuliah : $namaMataKuliah',
-                style: pw.TextStyle(fontSize: 12)),
-            pw.SizedBox(height: 5),
-            pw.Text('Tingkat/Jenjang : $tingkatJenjang',
-                style: pw.TextStyle(fontSize: 12)),
-            pw.SizedBox(height: 5),
-            pw.Text('Nama Dosen : $namaDosen',
-                style: pw.TextStyle(fontSize: 12)),
-            pw.SizedBox(height: 5),
-            pw.Text('Mata Kuliah Prasyarat : $mataKuliahPrasyarat',
-                style: pw.TextStyle(fontSize: 12)),
-            pw.SizedBox(height: 5),
-            pw.Text('Capaian Pembelajaran : $capaianPembelajaran',
-                style: pw.TextStyle(fontSize: 12)),
-            pw.SizedBox(height: 10),
-
-            // Bagian untuk menampilkan 'Media / Sumber Belajar Umum'
-          ],
-        );
-      },
-    ),
-  );
-
-  // Menyimpan PDF ke file
-  try {
-    final output = await getTemporaryDirectory();
-    final file = File("${output.path}/modul_bahan_ajar.pdf");
-    await file.writeAsBytes(await pdf.save());
-    print("PDF disimpan di: ${file.path}");
-
-    // Membuka file PDF setelah disimpan
-    await OpenFile.open(file.path);
-  } catch (e) {
-    print("Error saat menyimpan PDF: $e");
-  }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -303,7 +296,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
             children: [
               Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Bahan Ajar',
                       style:
@@ -311,7 +304,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(CupertinoIcons
+                    icon: const Icon(CupertinoIcons
                         .floppy_disk), // Menggunakan ikon floppy disk
                     onPressed: () async {
                       try {
@@ -322,7 +315,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                         final data = matkulPresent.getData();
 
                         // Memastikan data terisi sebelum membuat PDF
-                        if (data != null && data.isNotEmpty) {
+                        if (data.isNotEmpty) {
                           // Buat PDF menggunakan data yang telah dimuat
                           await generateModulPdf(data);
                         } else {
@@ -335,11 +328,11 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                   ),
                 ],
               ),
-              Text(
+              const Text(
                 'Identitas Mata Kuliah / Mata Pembelajaran',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Column(
                 children: [
                   // Baris 1
@@ -348,19 +341,19 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       Expanded(
                         child: TextFormField(
                           controller: _namaMataKuliahController,
-                          decoration: InputDecoration(
-                            labelText: 'Nama Mata Kuliah / Mata Pembelajaran',
+                          decoration: const InputDecoration(
+                            labelText: 'Mata Pembelajaran  / Nama Mata Kuliah',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.0),
+                      const SizedBox(width: 10.0),
                       Expanded(
                         child: TextFormField(
                           controller: _tingkatJenjangController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Tingkat/Jenjang',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -370,7 +363,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
 
                   // Baris 2
                   Row(
@@ -378,20 +371,20 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       Expanded(
                         child: TextFormField(
                           controller: _namaDosenController,
-                          decoration: InputDecoration(
-                            labelText: 'Nama Dosen',
+                          decoration: const InputDecoration(
+                            labelText: 'Nama Guru / Dosen',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.0),
+                      const SizedBox(width: 10.0),
                       Expanded(
                         child: TextFormField(
                           controller: _mataKuliahPrasyaratController,
-                          decoration: InputDecoration(
-                            labelText: 'Mata Kuliah Prasyarat',
+                          decoration: const InputDecoration(
+                            labelText: 'Materi / Mata Kuliah  Prasyarat',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
@@ -400,7 +393,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
 
                   // Baris 3
                   Row(
@@ -408,7 +401,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       Expanded(
                         child: TextFormField(
                           controller: _capaianPembelajaranController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Capaian Pembelajaran',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -416,11 +409,11 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.0),
+                      const SizedBox(width: 10.0),
                       Expanded(
                         child: TextFormField(
                           controller: _mediaPembelajrantextController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Media Pembelajaran',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -430,7 +423,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
 
                   // Baris 4
                   Row(
@@ -438,7 +431,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       Expanded(
                         child: TextFormField(
                           controller: _strategiUmumController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Strategi Umum',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -446,11 +439,11 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.0),
+                      const SizedBox(width: 10.0),
                       Expanded(
                         child: TextFormField(
                           controller: _assessmentUseController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Assessment yang Digunakan',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -460,7 +453,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
 
                   // Baris 5
                   Row(
@@ -468,7 +461,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       Expanded(
                         child: TextFormField(
                           controller: _bahanKajianController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Bahan Kajian',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -476,11 +469,11 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                           ),
                         ),
                       ),
-                      SizedBox(width: 10.0),
+                      const SizedBox(width: 10.0),
                       Expanded(
                         child: TextFormField(
                           controller: _jumlahAlokasiWaktuController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Jumlah Alokasi Waktu',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -490,7 +483,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -544,12 +537,12 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                   ),
 
                   if (data.isNotEmpty) ...[
-                    SizedBox(height: 16),
-                    Align(
+                    const SizedBox(height: 16),
+                    const Align(
                       alignment: Alignment
                           .centerLeft, // Ensure text is aligned to the left
                       child: Padding(
-                        padding: const EdgeInsets.only(
+                        padding: EdgeInsets.only(
                             left: 16.0), // Optional left padding
                         child: Text('Materi Bahan Ajar',
                             style: TextStyle(
@@ -560,39 +553,44 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                     ),
                   ],
                   if (data.isNotEmpty)
-                    Container(
+                    SizedBox(
                       height: 500,
                       child: ListView.builder(
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           var literasi = data[index];
-                          var count = literasi.materi?.id == null
-                              ? (literasi.materi?.id ?? 0) + 1
-                              : literasi.materi
-                                  ?.id; // Jika literasi.id null, gunakan 0
+                          if (_Subcontrollers.length !=
+                              literasi.subMateriList?.length) {
+                            _initializeControllers2(literasi.subMateriList);
+                          }
+                          var count = literasi.materi?.id ??
+                              (literasi.materi?.id ?? 0) +
+                                  1; // Jika literasi.id null, gunakan 0
                           return Card(
-                            margin: EdgeInsets.symmetric(vertical: 5),
+                            margin: const EdgeInsets.symmetric(vertical: 5),
                             child: ListTile(
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   Text(
-                                    'Pertemuan ${count}',
-                                    style: TextStyle(
+                                    'Materi $count',
+                                    style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         fontStyle: FontStyle.normal),
                                   ),
-                                  SizedBox(height: 15), // Spasi antar widget
-                                  Text(
+                                  const SizedBox(
+                                      height: 15), // Spasi antar widget
+                                  const Text(
                                     'Deskripsi',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FontStyle.normal),
                                   ),
-                                  SizedBox(height: 10), // Spasi antar widget
+                                  const SizedBox(
+                                      height: 10), // Spasi antar widget
 
                                   QuillToolbar.simple(
                                     controller: _controllers[index][0],
@@ -605,7 +603,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                           FlutterQuillEmbeds.toolbarButtons(),
                                     ),
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
                                   // QuillEditor untuk aktivitas literasi
                                   Container(
@@ -627,15 +625,17 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 20), // Spasi antar widget
-                                  Text(
+                                  const SizedBox(
+                                      height: 20), // Spasi antar widget
+                                  const Text(
                                     'Relevansi',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FontStyle.normal),
                                   ),
-                                  SizedBox(height: 10), // Spasi antar widget
+                                  const SizedBox(
+                                      height: 10), // Spasi antar widget
 
                                   QuillToolbar.simple(
                                     controller: _controllers[index][1],
@@ -648,7 +648,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                           FlutterQuillEmbeds.toolbarButtons(),
                                     ),
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
                                   // QuillEditor untuk aktivitas literasi
                                   Container(
@@ -671,15 +671,17 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                     ),
                                   ),
 
-                                  SizedBox(height: 20), // Spasi antar widget
-                                  Text(
+                                  const SizedBox(
+                                      height: 20), // Spasi antar widget
+                                  const Text(
                                     'Tujuan Pembelajaran',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FontStyle.normal),
                                   ),
-                                  SizedBox(height: 10), // Spasi antar widget
+                                  const SizedBox(
+                                      height: 10), // Spasi antar widget
 
                                   QuillToolbar.simple(
                                     controller: _controllers[index][2],
@@ -692,7 +694,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                           FlutterQuillEmbeds.toolbarButtons(),
                                     ),
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
                                   // QuillEditor untuk aktivitas literasi
                                   Container(
@@ -715,9 +717,10 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                     ),
                                   ),
 
-                                  SizedBox(height: 20), // Spasi antar widget
+                                  const SizedBox(
+                                      height: 20), // Spasi antar widget
                                   if (literasi.subMateriList!.isNotEmpty)
-                                    Container(
+                                    SizedBox(
                                       height: literasi.subMateriList?.length ==
                                               1
                                           ? 500
@@ -728,31 +731,30 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                         itemBuilder: (context, subIndex) {
                                           var sub =
                                               literasi.subMateriList?[subIndex];
-                                          var countsub = sub?.id == null
-                                              ? (sub?.id ?? 0) + 1
-                                              : sub?.id;
+                                          var countsub =
+                                              sub?.id ?? (sub?.id ?? 0) + 1;
                                           return Column(
                                             crossAxisAlignment: CrossAxisAlignment
                                                 .start, // Align children to the left
                                             children: [
-                                              SizedBox(height: 20),
+                                              const SizedBox(height: 20),
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     left:
                                                         16.0), // Optional: Add left padding
                                                 child: Text(
-                                                  'Sub Materi ${countsub}',
-                                                  style: TextStyle(
+                                                  'Sub Materi $countsub',
+                                                  style: const TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w700,
                                                     fontStyle: FontStyle.normal,
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                   height:
                                                       10), // Spasi antar widget
-                                              Text(
+                                              const Text(
                                                 'Uraian Materi',
                                                 style: TextStyle(
                                                     fontSize: 14,
@@ -760,13 +762,13 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                     fontStyle:
                                                         FontStyle.normal),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                   height:
                                                       10), // Spasi antar widget
 
                                               QuillToolbar.simple(
                                                 controller:
-                                                    _controllers[subIndex][3],
+                                                    _Subcontrollers[subIndex][0],
                                                 configurations:
                                                     QuillSimpleToolbarConfigurations(
                                                   showCodeBlock: false,
@@ -777,7 +779,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                           .toolbarButtons(),
                                                 ),
                                               ),
-                                              SizedBox(height: 8),
+                                              const SizedBox(height: 8),
 
                                               // QuillEditor untuk aktivitas literasi
                                               Container(
@@ -795,7 +797,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                     const EdgeInsets.all(16.0),
                                                 child: QuillEditor.basic(
                                                   controller:
-                                                      _controllers[subIndex][3],
+                                                      _Subcontrollers[subIndex][0],
                                                   configurations:
                                                       QuillEditorConfigurations(
                                                     embedBuilders: kIsWeb
@@ -806,8 +808,8 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(height: 8),
-                                              Text(
+                                              const SizedBox(height: 8),
+                                              const Text(
                                                 'Contoh Studi Kasus',
                                                 style: TextStyle(
                                                     fontSize: 14,
@@ -815,13 +817,13 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                     fontStyle:
                                                         FontStyle.normal),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                   height:
                                                       10), // Spasi antar widget
 
                                               QuillToolbar.simple(
                                                 controller:
-                                                    _controllers[subIndex][4],
+                                                    _Subcontrollers[subIndex][1],
                                                 configurations:
                                                     QuillSimpleToolbarConfigurations(
                                                   showCodeBlock: false,
@@ -832,7 +834,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                           .toolbarButtons(),
                                                 ),
                                               ),
-                                              SizedBox(height: 8),
+                                              const SizedBox(height: 8),
 
                                               // QuillEditor untuk aktivitas literasi
                                               Container(
@@ -850,7 +852,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                     const EdgeInsets.all(16.0),
                                                 child: QuillEditor.basic(
                                                   controller:
-                                                      _controllers[subIndex][4],
+                                                      _Subcontrollers[subIndex][1],
                                                   configurations:
                                                       QuillEditorConfigurations(
                                                     embedBuilders: kIsWeb
@@ -861,8 +863,8 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(height: 8),
-                                              Text(
+                                              const SizedBox(height: 8),
+                                              const Text(
                                                 'Latihan',
                                                 style: TextStyle(
                                                     fontSize: 14,
@@ -870,13 +872,13 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                     fontStyle:
                                                         FontStyle.normal),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                   height:
                                                       10), // Spasi antar widget
 
                                               QuillToolbar.simple(
                                                 controller:
-                                                    _controllers[subIndex][5],
+                                                    _Subcontrollers[subIndex][2],
                                                 configurations:
                                                     QuillSimpleToolbarConfigurations(
                                                   showCodeBlock: false,
@@ -887,7 +889,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                           .toolbarButtons(),
                                                 ),
                                               ),
-                                              SizedBox(height: 8),
+                                              const SizedBox(height: 8),
 
                                               // QuillEditor untuk aktivitas literasi
                                               Container(
@@ -905,7 +907,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                     const EdgeInsets.all(16.0),
                                                 child: QuillEditor.basic(
                                                   controller:
-                                                      _controllers[subIndex][5],
+                                                      _Subcontrollers[subIndex][2],
                                                   configurations:
                                                       QuillEditorConfigurations(
                                                     embedBuilders: kIsWeb
@@ -929,7 +931,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                       child: ElevatedButton(
                                         clipBehavior:
                                             Clip.antiAliasWithSaveLayer,
-                                        style: ButtonStyle(
+                                        style: const ButtonStyle(
                                           foregroundColor:
                                               WidgetStatePropertyAll<Color>(
                                             Color.fromARGB(255, 13, 20,
@@ -970,7 +972,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 15),
+                                  const SizedBox(height: 15),
 
                                   // Spasi antar widget
                                   Row(
@@ -999,7 +1001,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                     .toDelta()
                                                     .toJson();
                                             final aktivitasNumeraasijson =
-                                                _controllers[index][3]
+                                                _Subcontrollers[index][0]
                                                     .document
                                                     .toDelta()
                                                     .toJson();
@@ -1014,17 +1016,17 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                                 jsonEncode(
                                                     aktivitasNumeraasijson);
                                             final konteksLiterajson2 =
-                                                _controllers[index][4]
+                                                _Subcontrollers[index][1]
                                                     .document
                                                     .toDelta()
                                                     .toJson();
                                             final aktivitasLiteasijson2 =
-                                                _controllers[index][5]
+                                                _Subcontrollers[index][2]
                                                     .document
                                                     .toDelta()
                                                     .toJson();
                                             final konteksNumerisjson2 =
-                                                _controllers[index][6]
+                                                _Subcontrollers[index][3]
                                                     .document
                                                     .toDelta()
                                                     .toJson();
@@ -1079,10 +1081,11 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                             // Save data when pressed
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color.fromARGB(255,
-                                                6, 51, 142), // Background color
+                                            backgroundColor:
+                                                const Color.fromARGB(255, 6, 51,
+                                                    142), // Background color
                                           ),
-                                          child: Text(
+                                          child: const Text(
                                             'Simpan Data',
                                             style: TextStyle(
                                                 color:
@@ -1090,7 +1093,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                           width: 15), // Spacing between buttons
 
                                       // Hapus Data button
@@ -1107,7 +1110,7 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                             backgroundColor: Colors
                                                 .red, // Set the background color to red
                                           ),
-                                          child: Text(
+                                          child: const Text(
                                             'Hapus Data',
                                             style: TextStyle(
                                                 color:
@@ -1117,7 +1120,8 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 16), // Spasi antar widget
+                                  const SizedBox(
+                                      height: 16), // Spasi antar widget
                                 ],
                               ),
                             ),
@@ -1126,15 +1130,15 @@ Future<void> generateModulPdf(Map<String, dynamic> data) async {
                       ),
                     )
                   else
-                    Center(child: Text("")), // Pesan jika data kosong
-                  SizedBox(height: 10.0),
+                    const Center(child: Text("")), // Pesan jika data kosong
+                  const SizedBox(height: 10.0),
                   Center(
                     child: SizedBox(
                       height: 50,
                       width: 350,
                       child: ElevatedButton(
                         clipBehavior: Clip.antiAliasWithSaveLayer,
-                        style: ButtonStyle(
+                        style: const ButtonStyle(
                           foregroundColor: WidgetStatePropertyAll<Color>(
                             Color.fromARGB(255, 13, 20,
                                 33), // Menggunakan warna yang diinginkan

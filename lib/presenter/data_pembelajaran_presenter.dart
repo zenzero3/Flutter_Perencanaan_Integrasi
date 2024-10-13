@@ -38,7 +38,6 @@ class DataPembelajaranPresenter {
   Future<void> loadData() async {
     final dbHelper = DatabaseHelper();
     final data = await dbHelper.getAllData();
-    print('isidata $data');
 
     if (data.isNotEmpty) {
       // Ambil data pertama dari hasil query

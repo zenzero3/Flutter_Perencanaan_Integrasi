@@ -47,19 +47,23 @@ class DataPembelajaranModel {
     if (namaMataKuliah != null) this.namaMataKuliah = namaMataKuliah;
     if (tingkatJenjang != null) this.tingkatJenjang = tingkatJenjang;
     if (namaDosen != null) this.namaDosen = namaDosen;
-    if (mataKuliahPrasyarat != null)
+    if (mataKuliahPrasyarat != null) {
       this.mataKuliahPrasyarat = mataKuliahPrasyarat;
-    if (capaianPembelajaran != null)
+    }
+    if (capaianPembelajaran != null) {
       this.capaianPembelajaran = capaianPembelajaran;
+    }
     if (strategiUmum != null) this.strategiUmum = strategiUmum;
     if (mediaPembelajran != null) this.mediaPembelajran = mediaPembelajran;
-    if (mediaPembelajrantext != null)
+    if (mediaPembelajrantext != null) {
       this.mediaPembelajran = mediaPembelajrantext;
+    }
     if (assessmentUse != null) this.assessmentUse = assessmentUse;
     if (bahanKajian != null) this.bahanKajian = bahanKajian;
-    if (jumlahAlokasiwaktu != null)
-      this.JumlahAlokasiWaktu = jumlahAlokasiwaktu;
-    if (mediaSumber != null) this.MediaSumber = mediaSumber;
+    if (jumlahAlokasiwaktu != null) {
+      JumlahAlokasiWaktu = jumlahAlokasiwaktu;
+    }
+    if (mediaSumber != null) MediaSumber = mediaSumber;
   }
 
   // Metode untuk mengambil data sebagai Map

@@ -28,18 +28,18 @@ Future<DbCheckResult2> checkdb() async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Hapus Data Pembelajaran'),
-          content: Text(
+          title: const Text('Hapus Data Pembelajaran'),
+          content: const Text(
               'Apakah Anda yakin ingin menghapus semua data pembelajaran?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Batal'),
+              child: const Text('Batal'),
               onPressed: () {
                 Navigator.of(context).pop(); // Menutup dialog
               },
             ),
             TextButton(
-              child: Text('Hapus'),
+              child: const Text('Hapus'),
               onPressed: () async {
                 final dbHelper = DatabaseHelper();
                 bool success =
@@ -49,14 +49,14 @@ Future<DbCheckResult2> checkdb() async {
                 // Show a Snackbar based on the result
                 if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                         content: Text('Data pembelajaran berhasil dihapus')),
                   );
                                  refreshCallback(); // Call the refresh method
 
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                         content: Text('Gagal menghapus data pembelajaran')),
                   );
                 }

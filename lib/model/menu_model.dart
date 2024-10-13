@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:offlineapp/model/data_bahanajar_model.dart';
+import 'package:offlineapp/view/contoh_page.dart';
 import 'package:offlineapp/view/data_assesment_page.dart';
 import 'package:offlineapp/view/data_bahanajar_page.dart';
+// import 'package:offlineapp/view/data_bahanajar_page.dart';
 import 'package:offlineapp/view/data_literasi_numerasi_page.dart';
 import 'package:offlineapp/view/data_pembelajaran_page.dart';
 import 'package:offlineapp/view/data_perencanaan_pembelajaran_page.dart';
+import 'package:offlineapp/view/quil.dart';
+// import 'package:offlineapp/view/data_perencanaan_pembelajaran_page.dart';
 
 class MenuItem {
   final String title;
@@ -32,23 +37,28 @@ class MenuModel {
         icon: FontAwesomeIcons.book, // Menambahkan ikon
       ),
       MenuItem(
-          title: 'Asesmen',
-          onTap: DataAssessmentPage(),
-          icon: FontAwesomeIcons.chartGantt),
-      MenuItem(title: 'Literasi Numerasi',
-       icon: FontAwesomeIcons.listOl,
-        onTap: DataLiterasiNumerasiPage(),
-      ),
-      MenuItem(
+          title: 'Perencanaan Pembelajaran',
+          onTap: DataPerencanaanPembelajaranPage(),
+          icon: FontAwesomeIcons.listCheck),
+           MenuItem(
           title: 'Bahan Ajar',
           onTap: DataBahanajarPage(),
           icon: FontAwesomeIcons.list),
       MenuItem(
-          title: 'Perencanaan Pembelajaran',
-          onTap: DataPerencanaanPembelajaranPage(),
-          icon: FontAwesomeIcons.listCheck),
+          title: 'Asesmen',
+          onTap: const DataAssessmentPage(),
+          icon: FontAwesomeIcons.chartGantt),
       MenuItem(
-          press: deleteConfirmationCallback, // Memanggil callback saat di-tap
+        title: 'Literasi Numerasi',
+        icon: FontAwesomeIcons.listOl,
+        onTap: const DataLiterasiNumerasiPage(),
+      ),
+      MenuItem(
+          press: () {
+            print(
+                "Button clicked"); // Debugging untuk memastikan callback dipanggil
+            deleteConfirmationCallback();
+          },
           title: 'Hapus Data Pembelajaran',
           icon: FontAwesomeIcons.trashArrowUp),
     ];

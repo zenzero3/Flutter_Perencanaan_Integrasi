@@ -3,11 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:offlineapp/utils/helper.dart';
 import '../presenter/data_pembelajaran_presenter.dart';
 import 'data_pembelajaran_page.dart';
-import 'data_bahanajar_page.dart';
 import '../model/menu_model.dart';
 import '../presenter/menu_presenter.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -24,20 +25,20 @@ class _HomePageState extends State<HomePage> {
     presenter = MenuPresenter(model); // Menginisialisasi presenter dengan model
   }
 
-  Widget _currentPage =
-      Center(child: DataPembelajaranPage(
-        key: UniqueKey(), // Memaksa rebuild halaman
-        shouldReload: true, // Parameter untuk reload data
-      )); // Halaman default
-      
+  Widget _currentPage = Center(
+      child: DataPembelajaranPage(
+    key: UniqueKey(), // Memaksa rebuild halaman
+    shouldReload: true, // Parameter untuk reload data
+  )); // Halaman default
+
   void refreshData() {
     setState(() {
       selectedIndex = 0;
-      _currentPage =
-          Center(child: DataPembelajaranPage(
-            key: UniqueKey(), // Memaksa rebuild halaman
+      _currentPage = Center(
+          child: DataPembelajaranPage(
+        key: UniqueKey(), // Memaksa rebuild halaman
         shouldReload: true, // Parameter untuk reload data
-          )); // Refresh the main page
+      )); // Refresh the main page
     });
   }
 
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Perencanaan Pembelajaran Integratif',
           style: TextStyle(
             color: Colors.white,
@@ -55,15 +56,15 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 11, 142, 229),
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 11, 142, 229),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Row(
         children: [
           // Custom Sidebar
           Container(
             width: 300,
-            color: Color.fromARGB(255, 54, 54, 228),
+            color: const Color.fromARGB(255, 54, 54, 228),
             child: Column(
               children: presenter
                   .getMenuItems(context, refreshData)
@@ -79,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? Color.fromARGB(
+                        ? const Color.fromARGB(
                             255, 94, 107, 250) // Warna untuk item terpilih
                         : null, // Warna default jika tidak dipilih
                     border: Border.all(
@@ -108,6 +109,8 @@ class _HomePageState extends State<HomePage> {
                         // Warna untuk item terpilih
                       ),
                     ),
+                   
+
                     onTap: item.press != null
                         ? () async {
                             DbCheckResult2 kondisi = await presenter.checkdb();
@@ -122,13 +125,13 @@ class _HomePageState extends State<HomePage> {
                             int length = kondisi.data?.length ??
                                 0; // Use optional chaining to get length, or 0 if null
 
-                            if (length != 0 && index != 1 && index != 2) {
+                            if (length != 0 && index != 3 && index != 4) {
                               setState(() {
                                 selectedIndex =
                                     index; // Memperbarui indeks item yang dipilih
                                 _currentPage = item.onTap!; // Handle onTap
                               });
-                            } else if (index == 1 || index == 0 || index == 2) {
+                            } else if (index == 3 || index == 0 || index == 4) {
                               setState(() {
                                 selectedIndex =
                                     index; // Memperbarui indeks item yang dipilih
